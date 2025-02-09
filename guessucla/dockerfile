@@ -1,0 +1,28 @@
+FROM node:18-alpine
+
+LABEL maintainer="Michael Levin"
+LABEL description="Guess UCLA React Application"
+
+WORKDIR /app
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+ENV NODE_ENV=development
+ENV PORT=3000
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+
+CMD ["npm", "start"]
