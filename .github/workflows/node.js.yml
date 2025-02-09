@@ -19,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: [18.x, 20.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -31,8 +31,10 @@ jobs:
         cache: 'npm'
         cache-dependency-path: './guessucla/package-lock.json'
     
-    - name: Install dependencies
-      run: npm ci
+    - name: Clean install dependencies
+      run: |
+        npm install
+        npm ci
       
     - name: Build application
       run: npm run build
