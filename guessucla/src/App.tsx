@@ -9,8 +9,8 @@ const router = createBrowserRouter(userRoutes);
 function App() {
   return (
     <Auth0Provider
-      domain="YOUR_AUTH0_DOMAIN"
-      clientId="YOUR_AUTH0_CLIENT_ID"
+      domain={process.env.REACT_APP_AUTH0_DOMAIN!}
+      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID!}
       authorizationParams={{
         redirect_uri: window.location.origin
       }}
