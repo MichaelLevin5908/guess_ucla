@@ -1,0 +1,104 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: sans-serif;
+}
+
+.game-header {
+  background-color: #2774ae;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.logout-button {
+  padding: 0.5rem 1rem;
+  background-color: #ffd100;
+  color: #2774ae;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #ffca00;
+}
+
+.game-content {
+  flex: 1;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.image-container {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.location-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.guess-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.guess-input {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 2px solid #2774ae;
+  border-radius: 4px;
+  outline: none;
+}
+
+.guess-input:focus {
+  border-color: #005a9c;
+}
+
+.guess-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #2774ae;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.guess-button:hover {
+  background-color: #005a9c;
+}
+
+.feedback {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #2774ae;
+  margin-top: 1rem;
+}
