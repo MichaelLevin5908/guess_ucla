@@ -40,12 +40,7 @@
       "last 1 safari version"
     ]
   },
-  "jest": {
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ]
-  },
+  "jest": {},
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@testing-library/jest-dom": "^5.17.0",

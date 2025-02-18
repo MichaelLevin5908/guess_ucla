@@ -23,6 +23,7 @@ module.exports = {
   ],
   ignorePatterns: [
     'build/',
-    'public/'
+    'public/',
+    '.eslintrc.js'
   ]
-};
+}
