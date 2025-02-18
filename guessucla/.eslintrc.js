@@ -11,11 +11,18 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.json', '*.jsonc'],
+      files: ['**/*.json', '**/*.jsonc'],
       parser: 'jsonc-eslint-parser',
+      plugins: ['jsonc'],
       rules: {
-        'jsonc/no-comments': 'off'
+        'jsonc/no-comments': 'off',
+        'jsonc/indent': ['error', 2],
+        'jsonc/key-spacing': ['error', { beforeColon: false, afterColon: true }]
       }
     }
+  ],
+  ignorePatterns: [
+    'build/',
+    'public/'
   ]
 };

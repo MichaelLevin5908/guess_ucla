@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint \"./src/**/*.{ts,tsx}\" --fix"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.json,.jsonc --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -55,6 +55,7 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.57.1",
+    "eslint-plugin-jsonc": "^2.19.1",
     "jsonc-eslint-parser": "^2.4.0"
   }
 }
