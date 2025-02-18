@@ -13,7 +13,7 @@ class UserBase(BaseModel):
     username: str
     password: str
     email: str
-    friends: int
+    friends: str
     profile_pic: str
 
 class ProfileBase(BaseModel):

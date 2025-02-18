@@ -8,7 +8,7 @@ class User(Base):
     username = Column(String(50), unique=True)
     password = Column(String(50))
     email = Column(String(50))
-    friends = Column(Integer)
+    friends = Column(String(100))
     profile_pic = Column(String(50))
 
 
