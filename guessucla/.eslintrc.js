@@ -8,5 +8,14 @@ module.exports = {
   ],
   rules: {
     'react/react-in-jsx-scope': 'off'
-  }
+  },
+  overrides: [
+    {
+      files: ['*.json', '*.jsonc'],
+      parser: 'jsonc-eslint-parser',
+      rules: {
+        'jsonc/no-comments': 'off'
+      }
+    }
+  ]
 };
