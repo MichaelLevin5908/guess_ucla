@@ -1,11 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import '../styles/Game.css';
+
+declare global {
+  interface Window {
+    google: any;
+  }
+}
 
 const Game: React.FC = () => {
   const { user, logout } = useAuth0();
   const [guess, setGuess] = useState<string>('');
   const [feedback, setFeedback] = useState<string>('');
+  const [latLng, setLatLng] = useState<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
+  
+  useEffect(() => {
+    const geocoder = new window.google.maps.Geocoder();
+    const address = "UCLA";
+    geocoder.geocode({ address }, (results: any, status: any) => {
+      if (status === window.google.maps.GeocoderStatus.OK) {
+        const lat = results[0].geometry.location.lat();
+        const lng = results[0].geometry.location.lng();
+        setLatLng({ lat, lng });
+      }
+    });
+  }, []);
 
   const handleGuess = (event: React.FormEvent) => {
     event.preventDefault();
@@ -21,12 +40,12 @@ const Game: React.FC = () => {
         <div className="user-info">
           <img src={user?.picture} alt={user?.name} className="avatar" />
           <span>{user?.name}</span>
-          <button 
+          <button
             onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
             className="logout-button"
-            >
+          >
             Log Out
-            </button>       
+          </button>
         </div>
       </header>
 
@@ -34,6 +53,11 @@ const Game: React.FC = () => {
         <div className="image-container">
           {/* Add your UCLA location image here */}
           <img src="/placeholder.jpg" alt="UCLA Location" className="location-image" />
+          {latLng.lat !== 0 && (
+            <p className="location-coords">
+              UCLA Coordinates: {latLng.lat.toFixed(4)}, {latLng.lng.toFixed(4)}
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleGuess} className="guess-form">
