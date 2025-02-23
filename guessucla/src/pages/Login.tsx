@@ -20,7 +20,11 @@ const Login: React.FC = () => {
         <button
           onClick={() =>
             loginWithRedirect({
-              appState: { returnTo: '/game' }
+              appState: { returnTo: '/game' },
+              authorizationParams: {
+                redirect_uri: `${window.location.origin}/game`
+              }
+            });
             })
           }
           className="login-button"
