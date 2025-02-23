@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Game.css';
 
 declare global {
@@ -9,12 +10,42 @@ declare global {
 }
 
 const Game: React.FC = () => {
-  const { user, logout } = useAuth0();
+  const { user, logout, getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const navigate = useNavigate();
   const [guess, setGuess] = useState<string>('');
   const [feedback, setFeedback] = useState<string>('');
   const [latLng, setLatLng] = useState<{ lat: number; lng: number }>({ lat: 0, lng: 0 });
-  
+
+  // Check authentication and token
   useEffect(() => {
+    const checkAuthAndToken = async () => {
+      if (!isAuthenticated) {
+        navigate('/', { replace: true });
+        return;
+      }
+
+      try {
+        const token = await getAccessTokenSilently();
+        if (!token) {
+          console.error('No token available');
+          navigate('/', { replace: true });
+          return;
+        }
+
+        localStorage.setItem('auth_token', token);
+        
+        initializeMap();
+      } catch (error) {
+        console.error('Authentication error:', error);
+        navigate('/', { replace: true });
+      }
+    };
+
+    checkAuthAndToken();
+  }, [isAuthenticated, getAccessTokenSilently, navigate]);
+
+  // Initialize map
+  const initializeMap = () => {
     const geocoder = new window.google.maps.Geocoder();
     const address = "UCLA";
     geocoder.geocode({ address }, (results: any, status: any) => {
@@ -24,7 +55,7 @@ const Game: React.FC = () => {
         setLatLng({ lat, lng });
       }
     });
-  }, []);
+  };
 
   const handleGuess = (event: React.FormEvent) => {
     event.preventDefault();
