@@ -24,7 +24,6 @@ const Login: React.FC = () => {
               authorizationParams: {
                 redirect_uri: `${window.location.origin}/game`
               }
-            });
             })
           }
           className="login-button"
