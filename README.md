@@ -12,8 +12,10 @@ If running locally you will need .env file describing your authentication proper
 
 ### Instructions to Run Database
 
-* cd into guessucla/src/db/.venv
+* cd into guessucla/src/db
+* setup venv by doing `python -m venv .venv`
 * `source .venv/Scripts/activate` activates the virtual environment that contains the commands needed
+* `pip install fastapi uvicorn sqlalchemy pymysql`
 * `uvicorn main:app --reload` to start up database
 * open the local ip address into browser and append /docs to view database
     * `http://127.0.0.1:8000/docs`
