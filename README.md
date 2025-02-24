@@ -3,7 +3,7 @@
 # Development Workflow
 ____
 
-Install Docker
+Install Docker [Guide](https://docs.docker.com/engine/install/)
 
 ```shell
 $ docker-compose -f docker-compose.dev.yml up --build 
