@@ -1,27 +1,12 @@
-# guess_ucla
+# GUESS UCLA: The GeoGuesser for UCLA
 
-# setup process
+# Development Workflow
 ____
 
-If running locally you will need .env file describing your authentication properties
+Install Docker [Guide](https://docs.docker.com/engine/install/)
 
-`REACT_APP_AUTH0_DOMAIN=your-auth0-domain.auth0.com`
+```shell
+$ docker-compose -f docker-compose.dev.yml up --build 
+```
 
-`REACT_APP_AUTH0_CLIENT_ID=your-client-id`
-
-
-### Instructions to Run Database
-
-* cd into guessucla/src/db
-* setup venv by doing `python -m venv .venv`
-* `source .venv/Scripts/activate` activates the virtual environment that contains the commands needed
-* `pip install fastapi uvicorn sqlalchemy pymysql`
-* `uvicorn main:app --reload` to start up database
-* open the local ip address into browser and append /docs to view database
-    * `http://127.0.0.1:8000/docs`
-
-### Docker
-
-____
-
-The docker file setups your environment correctly and runs the application in an Ubuntu server
+You don't need to install anything, it'll automatically install everything and you've got to only work on the code. :)
