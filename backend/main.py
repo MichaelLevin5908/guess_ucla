@@ -6,7 +6,7 @@ import schemas
 import auth
 from database import engine, get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-import uuid 
+import uuid
 
 app = FastAPI()
 
@@ -18,15 +18,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(models.Base.metadata.create_all)
 
+
 @app.post("/register", response_model=schemas.ProfileResponse)
 async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(get_db)):
     # Check if email already exists
-    existing_profile = await db.execute(select(models.Profile).where(models.Profile.email == profile.email))
+    existing_profile = await db.execute(
+        select(models.Profile).where(models.Profile.email == profile.email)
+    )
     if existing_profile.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Email already registered")
 
@@ -48,15 +52,23 @@ async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(ge
     await db.refresh(db_profile)
     return db_profile
 
+
 @app.post("/login", response_model=schemas.Token)
 async def login(profile: schemas.ProfileLogin, db: AsyncSession = Depends(get_db)):
-    db_profile = await db.execute(select(models.Profile).where(models.Profile.email == profile.email))
+    db_profile = await db.execute(
+        select(models.Profile).where(models.Profile.email == profile.email)
+    )
     db_profile = db_profile.scalar_one_or_none()
-    if not db_profile or not auth.verify_password(profile.password, db_profile.password):
+    if not db_profile or not auth.verify_password(
+        profile.password, db_profile.password
+    ):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
     access_token = auth.create_access_token(data={"sub": db_profile.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 @app.get("/me", response_model=schemas.ProfileResponse)
-async def read_profile(current_profile: models.Profile = Depends(auth.get_current_user)):
+async def read_profile(
+    current_profile: models.Profile = Depends(auth.get_current_user),
+):
     return current_profile
