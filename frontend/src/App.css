@@ -32,6 +32,11 @@ body {
   text-align: center;
 }
 
+.login-page
+{
+  max-height: calc(100vh - 60px); 
+}
+
 .login-page * {
   box-sizing: border-box;
 }
@@ -100,10 +105,10 @@ nav ul li button:hover {
 
 /* Navbar Styles */
 .navbar {
+  height: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
   background-color: #003b5c; /* UCLA Blue */
   color: white;
 }
@@ -134,32 +139,33 @@ nav ul li button:hover {
   padding: 0;
 }
 
-.navbar-link {
+/* Give both anchors and buttons the same base styling */
+.navbar-link,
+.navbar-button {
+  display: inline-block;         /* Ensures both behave the same inline layout */
+  font-family: inherit;          /* Inherit the same font */
+  font-size: 1rem;               /* Or inherit, if preferred */
+  line-height: 1.5;              /* Aligns text similarly */
   color: white;
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   transition: background-color 0.3s;
+  vertical-align: middle;        /* Helps keep them aligned on the baseline */
 }
 
-.navbar-link:hover {
+/* Add hover effect for both */
+.navbar-link:hover,
+.navbar-button:hover {
   background-color: #ffd100; /* UCLA Gold */
-  color: #003b5c; /* UCLA Blue */
+  color: #003b5c;           /* UCLA Blue */
+  text-decoration: none;    /* Remove underline if present */
 }
 
+/* Additional overrides specifically for buttons */
 .navbar-button {
   background: none;
   border: none;
-  color: white;
-  font-weight: 500;
   cursor: pointer;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-
-.navbar-button:hover {
-  background-color: #ffd100; /* UCLA Gold */
-  color: #003b5c; /* UCLA Blue */
 }
