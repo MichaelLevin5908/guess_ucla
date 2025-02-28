@@ -36,15 +36,17 @@ class LocationModel(BaseModel):
     # This will be aliased to `_id` when sent to MongoDB,
     # but provided as `id` in the API requests and responses.
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
-    ucla_name: str = Field(...)                     # name of the location
-    address: str = Field(...)                       # from Google Maps
-    coordinates: str = Field(...)                   # from Wikipedia
-    image_storage: str = Field(...)                 # Amazon S3 bucket
-    views: Optional[int] = Field(default=0)         # how many times the image was being guessed
-    ranking: Optional[int] = Field(default=1000)    # based on how easy to guess
-    likes: Optional[int] = Field(default=0)         # how many like the location has
-    dislikes: Optional[int] = Field(default=0)      # how many dislikes the location has
-    comments: List[str] = Field(default=[])         # list of user comments
+    ucla_name: str = Field(...)  # name of the location
+    address: str = Field(...)  # from Google Maps
+    coordinates: str = Field(...)  # from Wikipedia
+    image_storage: str = Field(...)  # Amazon S3 bucket
+    views: Optional[int] = Field(
+        default=0
+    )  # how many times the image was being guessed
+    ranking: Optional[int] = Field(default=1000)  # based on how easy to guess
+    likes: Optional[int] = Field(default=0)  # how many like the location has
+    dislikes: Optional[int] = Field(default=0)  # how many dislikes the location has
+    comments: List[str] = Field(default=[])  # list of user comments
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -59,7 +61,7 @@ class LocationModel(BaseModel):
                 "ranking": 346,
                 "likes": 120,
                 "dislikes": 11,
-                "comments": ["Iconic", "Easy to guess"]
+                "comments": ["Iconic", "Easy to guess"],
             }
         },
     )
@@ -74,7 +76,7 @@ class UpdateLocationModel(BaseModel):
     address: Optional[str] = None
     coordinates: Optional[str] = None
     image_storage: Optional[str] = None
-    views: Optional[int] =  None
+    views: Optional[int] = None
     ranking: Optional[int] = None
     likes: Optional[int] = None
     dislikes: Optional[int] = None
@@ -93,7 +95,7 @@ class UpdateLocationModel(BaseModel):
                 "ranking": 346,
                 "likes": 120,
                 "dislikes": 11,
-                "comments": ["Iconic", "Easy to guess"]
+                "comments": ["Iconic", "Easy to guess"],
             }
         },
     )
@@ -103,11 +105,12 @@ class LocationCollection(BaseModel):
     """
     A container holding a list of `LocationModel` instances.
 
-    This exists because providing a top-level array in a JSON response can be a 
+    This exists because providing a top-level array in a JSON response can be a
     [vulnerability](https://haacked.com/archive/2009/06/25/json-hijacking.aspx/)
     """
 
     locations: List[LocationModel]
+
 
 # The application has five routes:
 #   POST/locations/ - creates a new location
@@ -199,7 +202,9 @@ async def update_location(id: str, location: UpdateLocationModel = Body(...)):
             raise HTTPException(status_code=404, detail=f"Location {id} not found")
 
     # The update is empty, but we should still return the matching document:
-    if (existing_location := await location_collection.find_one({"_id": id})) is not None:
+    if (
+        existing_location := await location_collection.find_one({"_id": id})
+    ) is not None:
         return existing_location
 
     raise HTTPException(status_code=404, detail=f"Location {id} not found")

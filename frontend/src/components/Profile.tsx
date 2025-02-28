@@ -12,16 +12,27 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="profile">
-      <h2>Profile</h2>
-      {currentProfile ? (
-        <>
-          <p>Email: {currentProfile.email}</p>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
+    <div
+      className="login-page"
+      style={{
+        backgroundImage: `url('/data/ucla_marks.png')`,
+        backgroundSize: "133px 76px",
+        backgroundPosition: "50px 50px",
+        backgroundRepeat: "repeat",
+        backgroundColor: "rgb(5, 162, 255)",
+      }}
+    >
+      <div className="login-container">
+        <h2>Profile</h2>
+        {currentProfile ? (
+          <>
+            <p>Email: {currentProfile.email}</p>
+            <button onClick={handleLogout}>Logout</button>
+          </>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
     </div>
   );
 };
