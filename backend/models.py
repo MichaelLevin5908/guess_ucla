@@ -21,5 +21,5 @@ class Profile(Base):
     game_history = Column(String(255), nullable=False)
     score = Column(String(255), nullable=False)
     user_id = Column(
-        String(36), ForeignKey("user.user_id"), unique=True, nullable=False
+        String(36), ForeignKey("user.user_id"), unique=True, nullable=False, index=True
     )
