@@ -29,41 +29,46 @@ async def startup():
 async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(get_db)):
     # Check if email already exists
     existing_profile = await db.execute(
-        select(models.Profile).where(models.Profile.email == profile.email)
+        select(models.User).where(models.User.email == profile.email)
     )
     if existing_profile.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Email already registered")
 
     # Generate a random user_id
     user_id = str(uuid.uuid4())
+    profile_id = str(uuid.uuid4())
 
     # Hash the password
     hashed_password = auth.get_password_hash(profile.password)
 
-    # Create the profile
-    db_profile = models.Profile(
+    # Create the user
+    db_user = models.User(
         user_id=user_id,
-        name=profile.name,
+        username=profile.name,
         email=profile.email,
         password=hashed_password,
     )
-    db.add(db_profile)
+
+    # Create the profile
+    db_profile = models.Profile(
+        user_id=user_id,
+        profile_id=profile_id,
+    )
+    db.add_all([db_user, db_profile])
     await db.commit()
-    await db.refresh(db_profile)
-    return db_profile
+    await db.refresh(db_user)
+    return {"user_id": user_id, "profile_id": profile_id, "email": profile.email}
 
 
 @app.post("/login", response_model=schemas.Token)
 async def login(profile: schemas.ProfileLogin, db: AsyncSession = Depends(get_db)):
-    db_profile = await db.execute(
-        select(models.Profile).where(models.Profile.email == profile.email)
+    db_user = await db.execute(
+        select(models.User).where(models.User.email == profile.email)
     )
-    db_profile = db_profile.scalar_one_or_none()
-    if not db_profile or not auth.verify_password(
-        profile.password, db_profile.password
-    ):
+    db_user = db_user.scalar_one_or_none()
+    if not db_user or not auth.verify_password(profile.password, db_user.password):
         raise HTTPException(status_code=401, detail="Incorrect email or password")
-    access_token = auth.create_access_token(data={"sub": db_profile.email})
+    access_token = auth.create_access_token(data={"sub": db_user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
 
