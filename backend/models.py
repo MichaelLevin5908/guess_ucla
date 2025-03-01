@@ -2,8 +2,9 @@ from sqlalchemy import Column, String, Integer
 from database import Base
 from sqlalchemy import ForeignKey
 
+
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     user_id = Column(String(36), primary_key=True, index=True)
     username = Column(String(50), unique=True)
@@ -14,7 +15,11 @@ class User(Base):
 class Profile(Base):
     __tablename__ = "profile"  # Rename the table to "profile"
 
-    profile_id = Column(String(36), primary_key=True, index=True)  # UUIDs are 36 characters long
+    profile_id = Column(
+        String(36), primary_key=True, index=True
+    )  # UUIDs are 36 characters long
     game_history = Column(String(255), nullable=False)
     score = Column(String(255), nullable=False)
-    user_id = Column(String(36), ForeignKey("user.user_id"), unique=True, nullable=False)
+    user_id = Column(
+        String(36), ForeignKey("user.user_id"), unique=True, nullable=False
+    )
