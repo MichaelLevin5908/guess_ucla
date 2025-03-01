@@ -15,7 +15,7 @@ class ProfileLogin(BaseModel):
 
 class ProfileResponse(BaseModel):
     user_id: str
-    name: str
+    profile_id: str
     email: str
 
 
