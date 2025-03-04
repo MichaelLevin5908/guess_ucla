@@ -48,15 +48,16 @@ async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(ge
         email=profile.email,
         password=hashed_password,
     )
-
-    # Create the profile
-    db_profile = models.Profile(
-        user_id=user_id,
-        profile_id=profile_id,
-    )
-    db.add_all([db_user, db_profile])
+    db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
+    # Create the profile
+    db_profile = models.Profile(
+        user_id=user_id, profile_id=profile_id, game_history="", score="0"
+    )
+    db.add(db_profile)
+    await db.commit()
+    await db.refresh(db_profile)
     return {"user_id": user_id, "profile_id": profile_id, "email": profile.email}
 
 
