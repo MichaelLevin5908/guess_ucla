@@ -1,6 +1,6 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 const Profile: React.FC = () => {
   const { currentProfile, logout } = useAuth();
@@ -9,6 +9,10 @@ const Profile: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate("/login");
+  };
+
+  const handleGame = () => {
+    navigate("/game");
   };
 
   return (
@@ -30,7 +34,9 @@ const Profile: React.FC = () => {
             <button onClick={handleLogout}>Logout</button>
           </>
         ) : (
-          <p>Loading...</p>
+          <button onClick={handleGame}> 
+            Get Guessing
+          </button>
         )}
       </div>
     </div>
