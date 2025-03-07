@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+//import { useAuth } from "../context/AuthContext";
+//import { useNavigate } from "react-router-dom";
 import "../App.css"; // Use the same styles as the login page
 
 const Game: React.FC = () => {
@@ -15,6 +15,10 @@ const Game: React.FC = () => {
   // State to store the marker position (click and hover)
   const [marker, setMarker] = useState<{ x: number; y: number; lat: number; lon: number } | null>(null);
   const [hoverMarker, setHoverMarker] = useState<{ x: number; y: number } | null>(null);
+
+  const overlayImage = document.querySelector(".overlay-image");
+  const imageWidth = overlayImage?.clientWidth ?? 0;
+  const imageHeight = overlayImage?.clientHeight ?? 0;
 
   // Function to transform pixel (X, Y) to latitude/longitude
   const transformToLatLon = (x: number, y: number) => {
@@ -131,10 +135,10 @@ const Game: React.FC = () => {
             {marker && (
               <div
                 className="marker"
-                style={{
-                  left: `${marker.x * document.querySelector(".overlay-image")!.clientWidth}px`,
-                  top: `${marker.y * document.querySelector(".overlay-image")!.clientHeight}px`
-                }}
+                  style={{
+                    left: `${marker.x * imageWidth}px`,
+                    top: `${marker.y * imageHeight}px`,
+                  }}
               />
             )}
             {hoverMarker && (
