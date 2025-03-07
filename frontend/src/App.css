@@ -194,8 +194,6 @@ nav ul li button:hover {
   height: auto;
   max-width: 90%;
   max-height: 90vh;
-  border: 2px solid #ccc;
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -217,12 +215,15 @@ nav ul li button:hover {
   right: 5px;   /* Always stick to the right */
   width: 40%;  /* Scale relative to the base image */
   height: auto;
-  max-width: 170px;  /* Prevents it from getting too large */
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  max-width: 400px;  /* Prevents it from getting too large */
   background-color: rgba(0,0,0,0);
   z-index: 10;
   transition: transform 0.3s ease-in-out;
   transform-origin: bottom right;
+  display: block;
+  padding: 0; /* Ensure no extra space inside */
+  margin: 0; /* Remove extra spacing */
+  border: 0;
 }
 
 .game-page .overlay:hover {
@@ -234,9 +235,11 @@ nav ul li button:hover {
   width: 100%;
   height: auto;
   object-fit: contain;
+  display: block;
+  padding: 0; /* Ensure no extra space inside */
+  margin: 0; /* Remove extra spacing */
+  border: 0;
 }
-
-
 
 /* Clicked Marker */
 .marker {
