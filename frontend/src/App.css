@@ -169,3 +169,127 @@ nav ul li button:hover {
   border: none;
   cursor: pointer;
 }
+
+/* Matches Login Page Background */
+.game-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 60px); /* Account for navbar height */
+  width: 100vw;
+}
+
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Ensure the base image is the correct size */
+.game-page .image-wrapper {
+  position: relative;  /* Make it a reference for absolutely positioned children */
+  width: 80vw;  /* Responsive scaling */
+  height: auto;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Base Image Styling */
+.game-page .base-image {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+}
+/* The overlay container is absolutely positioned, 
+  anchored in bottom-right, scaled on hover. */
+.game-page .overlay {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 40%;          /* Map + button share this width */
+  max-width: 400px;    /* Prevent it from getting too large */
+  display: flex;
+  flex-direction: column; /* Stack map on top, button below */
+  align-items: stretch;   /* Button matches the map's width */
+  background-color: transparent;
+  z-index: 10;
+  transform-origin: bottom right;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  opacity: 0.6;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.game-page .overlay:hover {
+  transform: scale(1.7); /* Both map & button scale together */
+  opacity: 1; /* Adjust opacity as needed */
+}
+
+/* The map image takes full width of the overlay */
+.game-page .overlay-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* The button is 100% width of the overlay container */
+.submit-guess-btn {
+  width: 100%;
+  box-sizing: border-box; /* So padding doesn't overflow width */
+  margin: 0;
+  padding: 0;
+  background-color: rgba(5, 162, 255, 0.6);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* Slightly separate from the map */
+  margin-top: 2px;
+}
+
+.submit-guess-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.submit-guess-btn:not(:disabled):hover {
+  background-color: rgba(5, 162, 255, 0.8);
+}
+
+/* Markers remain absolutely positioned inside .overlay */
+.marker,
+.hover-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.marker {
+  width: 3px;
+  height: 3px;
+  background-color: red;
+  border-radius: 80%;
+}
+
+.hover-marker {
+  width: 3px;
+  height: 3px;
+  background-color: blue;
+  opacity: 0.7;
+  border-radius: 80%;
+}
+  
