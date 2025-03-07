@@ -37,11 +37,11 @@ async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(ge
     # Generate a random user_id
     user_id = str(uuid.uuid4())
     profile_id = str(uuid.uuid4())
+    game_history_id = str(uuid.uuid4())
 
     # Hash the password
     hashed_password = auth.get_password_hash(profile.password)
 
-    # Create the user
     db_user = models.User(
         user_id=user_id,
         username=profile.name,
@@ -51,13 +51,19 @@ async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(ge
     db.add(db_user)
     await db.commit()
     await db.refresh(db_user)
-    # Create the profile
     db_profile = models.Profile(
-        user_id=user_id, profile_id=profile_id, game_history="", score="0"
+        user_id=user_id, profile_id=profile_id, average_score=0.0
     )
     db.add(db_profile)
     await db.commit()
     await db.refresh(db_profile)
+    db_game_history = models.GameHistory(
+        game_history_id=game_history_id,
+        profile_id=profile_id,
+    )
+    db.add(db_game_history)
+    await db.commit()
+    await db.refresh(db_game_history)
     return {"user_id": user_id, "profile_id": profile_id, "email": profile.email}
 
 
@@ -78,3 +84,39 @@ async def read_profile(
     current_profile: models.Profile = Depends(auth.get_current_user),
 ):
     return current_profile
+
+
+@app.put("/profile", response_model=schemas.ProfileResponse)
+async def update_profile(
+    profile: schemas.ProfileUpdate,
+    current_profile: models.Profile = Depends(auth.get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    current_profile.average_score = profile.average_score
+    await db.commit()
+    await db.refresh(current_profile)
+    return current_profile
+
+
+@app.put("/profile/game")
+async def update_game_history(
+    game_info: str,
+    score: float,
+    current_profile: models.Profile = Depends(auth.get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    db_game_history = await db.execute(
+        select(models.GameHistory).where(
+            models.GameHistory.profile_id == current_profile.profile_id
+        )
+    )
+    if not db_game_history:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    db_game_history = db_game_history.scalar_one_or_none()
+    db_game_history.game_info = game_info
+    db_game_history.score = score
+    db.add(db_game_history)
+    await db.commit()
+    await db.refresh(db_game_history)
+    return db_game_history
