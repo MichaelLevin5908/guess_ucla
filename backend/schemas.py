@@ -18,6 +18,12 @@ class ProfileResponse(BaseModel):
     profile_id: str
     email: str
 
+class ProfileUpdate(BaseModel):
+    average_score: float
+
+class GameHistoryUpdate(BaseModel):
+    game_info: str
+    score: float
 
 class Token(BaseModel):
     access_token: str
