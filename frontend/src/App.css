@@ -292,4 +292,66 @@ nav ul li button:hover {
   opacity: 0.7;
   border-radius: 80%;
 }
-  
+
+/* Leaderboard styles */
+.leaderboard-section {
+  margin: 20px 0;
+  width: 100%;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.leaderboard-table th {
+  background-color: #0039A6; /* UCLA Blue */
+  color: white;
+}
+
+.leaderboard-table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.current-player {
+  font-weight: bold;
+  background-color: rgba(255, 215, 0, 0.2) !important; /* Slightly gold background */
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.game-button, .logout-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.game-button {
+  background-color: #0039A6; /* UCLA Blue */
+  color: white;
+}
+
+.logout-button {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
