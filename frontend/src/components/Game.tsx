@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../App.css"; // Use the same styles as the login page
 
 const Game: React.FC = () => {
-  const { currentProfile, logout } = useAuth();
-  const navigate = useNavigate();
+  //const { currentProfile, logout } = useAuth();
 
   const overlayImagePath = "/data/ucla_map_hires.png";
   const base64Image = "/data/fummy_picture.png"; // Dummy placeholder until we get the MongoDB hooked up
@@ -49,11 +48,6 @@ const Game: React.FC = () => {
 
     const { lat, lon } = transformToLatLon(clickX, clickY);
     setMarker({ x: clickX, y: clickY, lat, lon });
-
-    console.log(
-      `Saved Marker at: X=${clickX}, Y=${clickY}, ` +
-      `Latitude=${lat.toFixed(6)}, Longitude=${lon.toFixed(6)}`
-    );
   };
 
   // Handle hover to move a temporary marker
@@ -94,15 +88,13 @@ const Game: React.FC = () => {
         const distance = haversineDistance(marker.lat, marker.lon, targetPoint.lat, targetPoint.lon);
         const score = distance >= 1.8 ? 0 : 5000 * (1 - distance / 1.8)**2;
 
-        console.log(`Distance: ${distance.toFixed(2)} miles`);
-        console.log(`Score: ${score.toFixed(2)}`);
+        return score;
     }
 
 
   // Handle submission of the guess (dummy example)
   const handleSubmitGuess = () => {
     if (marker) {
-      console.log("Submitting guess for marker:", marker);
       calculateDistanceAndScore(marker, targetPoint);
     }
   };
