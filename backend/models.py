@@ -29,7 +29,11 @@ class GameHistory(Base):
 
     game_history_id = Column(String(36), primary_key=True, unique=True, index=True)
     profile_id = Column(
-        String(36), ForeignKey("profile.profile_id"), unique=True, nullable=False, index=True
+        String(36),
+        ForeignKey("profile.profile_id"),
+        unique=True,
+        nullable=False,
+        index=True,
     )
     game_info = Column(String(36), nullable=True)
     score = Column(Float, nullable=True)

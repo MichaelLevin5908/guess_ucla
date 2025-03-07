@@ -52,9 +52,7 @@ async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(ge
     await db.commit()
     await db.refresh(db_user)
     db_profile = models.Profile(
-        user_id=user_id, 
-        profile_id=profile_id,
-        average_score=0.0
+        user_id=user_id, profile_id=profile_id, average_score=0.0
     )
     db.add(db_profile)
     await db.commit()
@@ -99,6 +97,7 @@ async def update_profile(
     await db.refresh(current_profile)
     return current_profile
 
+
 @app.put("/profile/game")
 async def update_game_history(
     game_info: str,
@@ -107,7 +106,9 @@ async def update_game_history(
     db: AsyncSession = Depends(get_db),
 ):
     db_game_history = await db.execute(
-        select(models.GameHistory).where(models.GameHistory.profile_id == current_profile.profile_id)
+        select(models.GameHistory).where(
+            models.GameHistory.profile_id == current_profile.profile_id
+        )
     )
     if not db_game_history:
         raise HTTPException(status_code=404, detail="Profile not found")
