@@ -3,7 +3,7 @@ from typing import Optional, List
 
 from fastapi import FastAPI, Body, HTTPException, status
 from fastapi.responses import Response
-from pydantic import ConfigDict, BaseModel, Field, EmailStr
+from pydantic import ConfigDict, BaseModel, Field
 from pydantic.functional_validators import BeforeValidator
 
 from typing_extensions import Annotated
@@ -12,11 +12,19 @@ from bson import ObjectId
 import motor.motor_asyncio
 from pymongo import ReturnDocument
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 geo_db = FastAPI()
 
-# Connect to MongoDB
-client = motor.motor_asyncio.AsyncIOMotorClient(os.environ["MONGODB_URL"])
+# MongoDB URI from environment variables
+MONGO_URI = os.getenv("MONGO_URI")  # from .env
+
+# Motor's async MongoDB client
+client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_URI)
+
 # Database `geoguesser`
 db = client.get_database("geoguesser")
 # Collection `location`
@@ -36,15 +44,15 @@ class LocationModel(BaseModel):
     # This will be aliased to `_id` when sent to MongoDB,
     # but provided as `id` in the API requests and responses.
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
-    ucla_name: str = Field(...)  # name of the location
+    ucla_name: str = Field(...)  # name of the location from Google Maps
     address: str = Field(...)  # from Google Maps
-    coordinates: str = Field(...)  # from Wikipedia
-    image_storage: str = Field(...)  # Amazon S3 bucket
+    coordinates: str = Field(...)  # from Google Maps
+    image_storage: str = Field(...)  # MongoDB Atlas
     views: Optional[int] = Field(
         default=0
     )  # how many times the image was being guessed
     ranking: Optional[int] = Field(default=1000)  # based on how easy to guess
-    likes: Optional[int] = Field(default=0)  # how many like the location has
+    likes: Optional[int] = Field(default=0)  # how many likes the location has
     dislikes: Optional[int] = Field(default=0)  # how many dislikes the location has
     comments: List[str] = Field(default=[])  # list of user comments
 
@@ -55,8 +63,8 @@ class LocationModel(BaseModel):
             "example": {
                 "ucla_name": "Royce Hall",
                 "address": "10745 Dickson Ct, Los Angeles, CA 90095",
-                "coordinates": "lat: 34.422, lon: -118.2631",
-                "image_storage": "https://s3.amazonaws.com/CS35L-bucket/royce-hall.jpg",
+                "coordinates": "lat: 34.07296, lon: -118.44219",
+                "image_storage": "/9j/4AAQSkZJRgABAQAA...",
                 "views": 500,
                 "ranking": 346,
                 "likes": 120,
@@ -89,8 +97,8 @@ class UpdateLocationModel(BaseModel):
             "example": {
                 "ucla_name": "Royce Hall",
                 "address": "10745 Dickson Ct, Los Angeles, CA 90095",
-                "coordinates": "lat: 34.422, lon: -118.2631",
-                "image_storage": "https://s3.amazonaws.com/CS35L-bucket/royce-hall.jpg",
+                "coordinates": "lat: 34.07296, lon: -118.44219",
+                "image_storage": "/9j/4AAQSkZJRgABAQAA...",
                 "views": 500,
                 "ranking": 346,
                 "likes": 120,
