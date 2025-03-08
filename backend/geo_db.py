@@ -1,16 +1,17 @@
 import os
 from typing import Optional, List
+
 from fastapi import FastAPI, Body, HTTPException, status
 from fastapi.responses import Response
 from pydantic import ConfigDict, BaseModel, Field
 from pydantic.functional_validators import BeforeValidator
+
 from typing_extensions import Annotated
+
 from bson import ObjectId
-from bson.binary import Binary
-from pymongo import ReturnDocument
 import motor.motor_asyncio
-import io
-import base64
+from pymongo import ReturnDocument
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env
@@ -63,7 +64,7 @@ class LocationModel(BaseModel):
                 "ucla_name": "Royce Hall",
                 "address": "10745 Dickson Ct, Los Angeles, CA 90095",
                 "coordinates": "lat: 34.07296, lon: -118.44219",
-                "image_storage": "Binary.createFromBase64('/9j/4AAQSkZJRgABAQAA...')",
+                "image_storage": "/9j/4AAQSkZJRgABAQAA...",
                 "views": 500,
                 "ranking": 346,
                 "likes": 120,
@@ -72,15 +73,6 @@ class LocationModel(BaseModel):
             }
         },
     )
-
-
-# Helper function to convert base64 string to binary data for storage
-def decode_base64_image(base64_string: str) -> Binary:
-    try:
-        image_data = base64.b64decode(base64_string)
-        return Binary(image_data)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="Invalid Base64 image string")
 
 
 class UpdateLocationModel(BaseModel):
@@ -106,7 +98,7 @@ class UpdateLocationModel(BaseModel):
                 "ucla_name": "Royce Hall",
                 "address": "10745 Dickson Ct, Los Angeles, CA 90095",
                 "coordinates": "lat: 34.07296, lon: -118.44219",
-                "image_storage": "Binary.createFromBase64('/9j/4AAQSkZJRgABAQAA...')",
+                "image_storage": "/9j/4AAQSkZJRgABAQAA...",
                 "views": 500,
                 "ranking": 346,
                 "likes": 120,
@@ -147,10 +139,6 @@ async def create_location(location: LocationModel = Body(...)):
 
     A unique `id` will be created and provided in the response.
     """
-
-    # Assuming image_storage is a base64-encoded string in the request body
-    location.image_storage = decode_base64_image(location.image_storage)
-
     new_location = await location_collection.insert_one(
         location.model_dump(by_alias=True, exclude=["id"])
     )
@@ -206,11 +194,6 @@ async def update_location(id: str, location: UpdateLocationModel = Body(...)):
     Only the provided fields will be updated.
     Any missing or `null` fields will be ignored.
     """
-
-    if location.image_storage:
-        # Decode the Base64 string to binary data and update the image
-        location.image_storage = decode_base64_image(location.image_storage)
-
     location = {
         k: v for k, v in location.model_dump(by_alias=True).items() if v is not None
     }
