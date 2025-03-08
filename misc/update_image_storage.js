@@ -1,7 +1,7 @@
 require('dotenv').config(); 
 
-const { MongoClient, Binary, ObjectId } = require('mongodb');
-const fs = require('fs').promises; // Use promises API
+const { MongoClient, ObjectId } = require('mongodb');
+const fs = require('fs').promises; // use promises API
 const path = require('path');
 const os = require('os');
 
@@ -12,30 +12,25 @@ async function updateImageInLocation() {
   try {
     // Connect to MongoDB
     await client.connect();
-    const db = client.db('geoguesser');
-    const locationCollection = db.collection('location'); // Location collection
+    const db = client.db('geoguesser'); // database
+    const locationCollection = db.collection('location'); // collection
 
     // Path to the new image
-    const imagePath = path.join(os.homedir(), 'Desktop', 'mongodb-practice', 'mongodb-with-fastapi', 'mongo-images', 'ucla-store.jpg');
+    const imagePath = path.join(os.homedir(), 'Desktop', 'mongodb-practice', 'mongodb-with-fastapi', 'mongo-images', 'shapiro-fountain.jpg.64');
 
-    // Read the image file
     const imageBuffer = await fs.readFile(imagePath);
 
-    // Create Binary object using the image buffer directly
-    const binaryImage = new Binary(imageBuffer);
+    const locationId = '67c813a08ad55196c9677609';  // document _id
 
-    // Specify the document ID of the location you want to update
-    const locationId = '67c7f9878ad55196c9677602';  // document _id
-
-    // Update the document with the correct binary image
+    // Update the document with the image
     const updateResult = await locationCollection.updateOne(
-      { _id: new ObjectId(locationId) },  // Find the location by _id
-      { $set: { image_storage: binaryImage } }  // Set the new image storage
+      { _id: new ObjectId(locationId) },  // find location by _id
+      { $set: { image_storage: imageBuffer } }  // set new image storage
     );
 
     if (updateResult.modifiedCount > 0) {
       console.log('Image updated successfully!');
-    } else {
+  } else {
       console.log('No document found or no change made.');
     }
   } catch (error) {
