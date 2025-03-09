@@ -3,6 +3,7 @@ from typing import Optional, List
 
 from fastapi import FastAPI, Body, HTTPException, status
 from fastapi.responses import Response
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ConfigDict, BaseModel, Field
 from pydantic.functional_validators import BeforeValidator
 
@@ -18,6 +19,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 geo_db = FastAPI()
+
+geo_db.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allow frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE)
+    allow_headers=["*"],  # Allow all headers
+)
 
 # MongoDB URI from environment variables
 MONGO_URI = os.getenv("MONGO_URI")  # from .env

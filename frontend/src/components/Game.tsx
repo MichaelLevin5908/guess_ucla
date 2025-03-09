@@ -2,13 +2,42 @@ import React, { useState, useEffect } from "react";
 //import { useAuth } from "../context/AuthContext";
 //import { useNavigate } from "react-router-dom";
 import "../App.css"; // Use the same styles as the login page
+import { getTotalLocations, getLocationByIndex } from "../api/geo_utils.js";
+
 
 const Game: React.FC = () => {
   //const { currentProfile, logout } = useAuth();
+  interface LocationData {
+    ucla_name: string;
+    address: string;
+    coordinates: string;
+    parsedCoordinates: { lat: number; lon: number };
+    image_storage: string;
+    views: number;
+    ranking: number;
+    likes: number;
+    dislikes: number;
+    comments: string[];
+  }
+  const DEFAULT_LOCATION: LocationData = {
+    ucla_name: "Unknown Location",
+    address: "No address available",
+    coordinates: "lat: 0, lon: 0",
+    parsedCoordinates: { lat: 0, lon: 0 },
+    image_storage: "", // Empty Base64 string
+    views: 0,
+    ranking: 1000,
+    likes: 0,
+    dislikes: 0,
+    comments: [],
+};
 
+  const [locationIndex, setLocationIndex] = useState(0);
+  const [location, setLocation] = useState<LocationData>(DEFAULT_LOCATION);
+  
   const overlayImagePath = "/data/ucla_map_hires.png";
-  const base64Image = "/data/fummy_picture.png"; // Dummy placeholder until we get the MongoDB hooked up
-  const targetPoint = {lat: 34.070954, lon: -118.444762};
+  const base64Image = location?.image_storage ?? ""; // ✅ Defaults to empty string if null
+  const targetPoint = location?.parsedCoordinates ?? { lat: 0, lon: 0 }; // ✅ Default coordinates
 
   const scaleFactor = 1.7; // Matches the overlay hover effect
 
@@ -35,14 +64,23 @@ const Game: React.FC = () => {
   // Recalculate marker position on window resize (keeps marker aligned)
   useEffect(() => {
     const handleResize = () => {
-      if (marker) {
-        setMarker({ ...marker }); // Force update to apply new scaled position
-      }
+        if (marker) {
+            setMarker({ ...marker }); // Force update to apply new scaled position
+        }
     };
+
+    const fetchLocation = async () => {
+        const data = await getLocationByIndex(locationIndex); // ✅ Fetch location by index
+        setLocation(data); // ✅ Store resolved data in state
+    };
+
+    fetchLocation(); // ✅ Fetch location whenever `index` changes
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [marker]);
+
+  }, [marker, locationIndex]); // ✅ Now runs when `marker` OR `index` changes
+
 
   // Handle user click to place a marker
   const handleOverlayClick = (event: React.MouseEvent<HTMLImageElement>) => {
@@ -117,7 +155,7 @@ const Game: React.FC = () => {
       <div className="game-container">
         <div className="image-wrapper">
           {/* Base Image (background) */}
-          <img src={base64Image} alt="Main" className="base-image" />
+          <img src={`data:image/jpeg;base64,${location.image_storage}`} alt="Main" className="base-image" />
 
           {/* Overlay Container (the "map") + Button */}
           <div className="overlay">
