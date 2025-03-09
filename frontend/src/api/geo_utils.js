@@ -11,7 +11,7 @@ export async function getAllLocations() {
         const response = await axios.get(`${API_BASE_URL}/locations/`);
         return response.data.locations; // Extract the list of locations
     } catch (error) {
-        console.error("Error fetching locations:", error);
+        //console.error("Error fetching locations:", error);
         return []; // Return an empty array if request fails
     }
 }
@@ -33,7 +33,7 @@ export async function findLocationByName(name: string) {
 
         return matchingLocation || null;
     } catch (error) {
-        console.error(`Error finding location by name "${name}":`, error);
+        //console.error(`Error finding location by name "${name}":`, error);
         return null;
     }
 }
@@ -47,7 +47,7 @@ export async function getTotalLocations() {
         const locations = await getAllLocations();
         return locations.length; // Return the count of locations
     } catch (error) {
-        console.error("Error fetching total locations:", error);
+        //console.error("Error fetching total locations:", error);
         return 0;
     }
 }
@@ -67,7 +67,7 @@ export async function getLocationByIndex(index: number) {
         const locations = await getAllLocations();
 
         if (index < 0 || index >= locations.length) {
-            console.error(`Index ${index} is out of range.`);
+            //console.error(`Index ${index} is out of range.`);
             return null; // Return null if index is out of bounds
         }
 
@@ -81,7 +81,7 @@ export async function getLocationByIndex(index: number) {
 
         return { ...location, parsedCoordinates };
     } catch (error) {
-        console.error(`Error fetching location at index ${index}:`, error);
+        //console.error(`Error fetching location at index ${index}:`, error);
         return null;
     }
 }
