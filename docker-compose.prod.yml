@@ -13,8 +13,12 @@ services:
       - DB_PASSWORD=securepassword
       - DB_NAME=auth_db
       - SECRET_KEY=your-secure-secret-key-here
+      # Use environment variable or fallback to a placeholder that will fail visibly
+      - MONGO_URI=${MONGO_ATLAS_URI}
     depends_on:
       - mariadb
+    env_file:
+      - ./misc/.env.prod
 
   frontend:
     build:
