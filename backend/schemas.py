@@ -19,6 +19,15 @@ class ProfileResponse(BaseModel):
     email: str
 
 
+class ProfileUpdate(BaseModel):
+    average_score: float
+
+
+class GameHistoryUpdate(BaseModel):
+    game_info: str
+    score: float
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str
