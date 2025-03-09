@@ -1,7 +1,7 @@
 import os
 from typing import Optional, List
 
-from fastapi import FastAPI, Body, HTTPException, status
+from fastapi import APIRouter, FastAPI, Body, HTTPException, status
 from fastapi.responses import Response
 from pydantic import ConfigDict, BaseModel, Field
 from pydantic.functional_validators import BeforeValidator
@@ -14,10 +14,15 @@ from pymongo import ReturnDocument
 
 from dotenv import load_dotenv
 
+import re
+import inspect
+
 # Load environment variables from .env
 load_dotenv()
 
 geo_db = FastAPI()
+
+
 
 # MongoDB URI from environment variables
 MONGO_URI = os.getenv("MONGO_URI")  # from .env
@@ -44,6 +49,7 @@ class LocationModel(BaseModel):
     # This will be aliased to `_id` when sent to MongoDB,
     # but provided as `id` in the API requests and responses.
     id: Optional[PyObjectId] = Field(alias="_id", default=None)
+    pnum: Optional[int] = Field(default=0)  # picture number
     ucla_name: str = Field(...)  # name of the location from Google Maps
     address: str = Field(...)  # from Google Maps
     coordinates: str = Field(...)  # from Google Maps
@@ -80,6 +86,7 @@ class UpdateLocationModel(BaseModel):
     A set of optional updates to be made to a document in the database.
     """
 
+    pnum: Optional[int] = None
     ucla_name: Optional[str] = None
     address: Optional[str] = None
     coordinates: Optional[str] = None
@@ -95,6 +102,7 @@ class UpdateLocationModel(BaseModel):
         json_encoders={ObjectId: str},
         json_schema_extra={
             "example": {
+                "pnum": 0,
                 "ucla_name": "Royce Hall",
                 "address": "10745 Dickson Ct, Los Angeles, CA 90095",
                 "coordinates": "lat: 34.07296, lon: -118.44219",
@@ -121,9 +129,10 @@ class LocationCollection(BaseModel):
 
 
 # The application has five routes:
+#   PICK/locations/{id} - view a single location using id
 #   POST/locations/ - creates a new location
 #   GET/locations/ - view a list of all locations
-#   GET/locations/{id} - view a single location
+#   GET/locations/{pnum} - view a single location using pnum
 #   PUT/locations/{id} - update a location
 #   DELETE/locations/{id} - delete a location
 @geo_db.post(
@@ -148,6 +157,7 @@ async def create_location(location: LocationModel = Body(...)):
     return created_location
 
 
+
 @geo_db.get(
     "/locations/",
     response_description="List all locations",
@@ -160,7 +170,28 @@ async def list_locations():
 
     The response is unpaginated and limited to 1000 results.
     """
+    #return LocationCollection(locations=await location_collection.find().to_list(1000))
     return LocationCollection(locations=await location_collection.find().to_list(1000))
+
+
+
+@geo_db.get(
+    "/locations/{pnum}",
+    response_description="Get a single location using the pnum field",
+    response_model=LocationModel,
+    response_model_by_alias=False,
+)
+async def show_location(pnum: int):
+    """
+    Get the record for a specific location, looked up by `pnum`.
+    """
+
+    if (
+        location := await location_collection.find_one({"pnum": pnum })
+    ) is not None:
+        return location
+
+    raise HTTPException(status_code=404, detail=f"Location {pnum} not found")
 
 
 @geo_db.get(
@@ -180,6 +211,22 @@ async def show_location(id: str):
 
     raise HTTPException(status_code=404, detail=f"Location {id} not found")
 
+
+
+
+'''
+@geo_db.pick(
+    "/locations/",
+    response_description="List all locations",
+    response_model=LocationModel,
+    response_model_by_alias=False,
+)
+async def pick_location():
+
+
+    return LocationCollection(locations=await location_collection.aggregate([{ likes: { size: 1 } }]) )
+    return LocationCollection(locations=await location_collection.find().to_list(1))
+'''
 
 @geo_db.put(
     "/locations/{id}",
