@@ -47,19 +47,19 @@ export interface GameResult {
 
 const gameService = {
   // Get random locations for a game
-  getRandomLocations: async (count: number = 5): Promise<Location[]> => {
+  getRandomLocations: async (count = 5): Promise<Location[]> => {
     const response = await api.get(`/game/locations/random?count=${count}`);
     return response.data.locations;
   },
   
   // Get daily challenge locations
-  getDailyLocations: async (count: number = 5): Promise<Location[]> => {
+  getDailyLocations: async (count = 5): Promise<Location[]> => {
     const response = await api.get(`/game/locations/daily?count=${count}`);
     return response.data.locations;
   },
   
   // Get lobby-specific locations
-  getLobbyLocations: async (lobbyId: string, count: number = 5): Promise<Location[]> => {
+  getLobbyLocations: async (lobbyId: string, count = 5): Promise<Location[]> => {
     const response = await api.get(`/game/locations/lobby/${lobbyId}?count=${count}`);
     return response.data.locations;
   },
@@ -71,7 +71,7 @@ const gameService = {
   },
   
   // Get leaderboard
-  getLeaderboard: async (limit: number = 10) => {
+  getLeaderboard: async (limit = 10) => {
     const response = await api.get(`/game/leaderboard?limit=${limit}`);
     return response.data.leaderboard;
   },
@@ -87,7 +87,7 @@ const gameService = {
     await api.post(`/game/location/${locationId}/view`);
   },
   
-  likeLocation: async (locationId: string, liked: boolean = true) => {
+  likeLocation: async (locationId: string, liked = true) => {
     await api.post(`/game/location/${locationId}/like?liked=${liked}`);
   },
   
@@ -97,6 +97,3 @@ const gameService = {
 };
 
 export default gameService;
-
-// Add this empty export if the above is not enough to make it a module
-// export {};
