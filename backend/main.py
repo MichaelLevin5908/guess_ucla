@@ -7,6 +7,7 @@ import auth
 from database import engine, get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
+from api import game_routes
 
 app = FastAPI()
 
@@ -18,12 +19,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add the game routes
+app.include_router(game_routes.router, prefix="/game", tags=["game"])
 
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(models.Base.metadata.create_all)
-
 
 @app.post("/register", response_model=schemas.ProfileResponse)
 async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(get_db)):
