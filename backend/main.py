@@ -74,10 +74,10 @@ async def login(profile: schemas.ProfileLogin, db: AsyncSession = Depends(get_db
 @app.get("/profile", response_model=schemas.ProfileResponse)
 async def read_profile(
     current_profile: models.Profile = Depends(auth.get_current_user),
-):  
+):
     if not current_profile:
-        raise HTTPException(status_code=401, detail="Not Authenticated");
-    return current_profile;
+        raise HTTPException(status_code=401, detail="Not Authenticated")
+    return current_profile
 
 
 @app.put("/profile", response_model=schemas.ProfileResponse)
@@ -91,7 +91,8 @@ async def update_profile(
     current_profile.average_score = profile.average_score
     await db.commit()
     await db.refresh(current_profile)
-    return current_profile;
+    return current_profile
+
 
 @app.delete("/profile")
 async def delete_profile(
@@ -100,15 +101,26 @@ async def delete_profile(
 ):
     if not current_profile:
         raise HTTPException(status_code=401, detail="Not Authenticated")
-    game_history = await db.execute(select(models.GameHistory).where(models.GameHistory.profile_id == current_profile.profile_id));
-    profile = await db.execute(select(models.Profile).where(models.Profile.profile_id == current_profile.profile_id));
-    user = await db.execute(select(models.User).where(models.User.user_id == current_profile.user_id));
+    game_history = await db.execute(
+        select(models.GameHistory).where(
+            models.GameHistory.profile_id == current_profile.profile_id
+        )
+    )
+    profile = await db.execute(
+        select(models.Profile).where(
+            models.Profile.profile_id == current_profile.profile_id
+        )
+    )
+    user = await db.execute(
+        select(models.User).where(models.User.user_id == current_profile.user_id)
+    )
     if game_history.scalar_one_or_none() is not None:
-        await db.delete(game_history.scalar());
-    await db.delete(profile.scalar());   
-    await db.delete(user.scalar());
-    await db.commit();
+        await db.delete(game_history.scalar())
+    await db.delete(profile.scalar())
+    await db.delete(user.scalar())
+    await db.commit()
     return {"message": "Profile deleted"}
+
 
 @app.put("/game", response_model=schemas.GameResponse)
 async def update_game(
@@ -125,7 +137,7 @@ async def update_game(
 ):
     if not current_profile:
         raise HTTPException(status_code=401, detail="Not Authenticated")
-    game_id = str(uuid.uuid4());
+    game_id = str(uuid.uuid4())
     game = models.Game(
         game_id=game_id,
         lobby_id=lobby_id,
@@ -138,8 +150,7 @@ async def update_game(
         score5=score5,
         profile_id=current_profile.profile_id,
     )
-    db.add(game);
-    await db.commit();
-    await db.refresh(game);
-    return game;
-
+    db.add(game)
+    await db.commit()
+    await db.refresh(game)
+    return game

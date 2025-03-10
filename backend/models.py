@@ -14,7 +14,7 @@ class User(Base):
 
 class Profile(Base):
     __tablename__ = "profile"
-    
+
     profile_id = Column(
         String(36), primary_key=True, unique=True, index=True
     )  # UUIDs are 36 characters long
@@ -37,6 +37,9 @@ class Game(Base):
     score4 = Column(Integer, nullable=False)
     score5 = Column(Integer, nullable=False)
     profile_id = Column(
-        String(36), ForeignKey("profile.profile_id"), unique=False, nullable=False, index=True,
+        String(36),
+        ForeignKey("profile.profile_id"),
+        unique=False,
+        nullable=False,
+        index=True,
     )
-    

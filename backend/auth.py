@@ -56,8 +56,10 @@ async def get_current_user(
     current_user = current_user.scalar_one_or_none()
     if current_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    profile = await db.execute(select(Profile).where(current_user.user_id == Profile.user_id))
+    profile = await db.execute(
+        select(Profile).where(current_user.user_id == Profile.user_id)
+    )
     profile = profile.scalar_one_or_none()
     if profile is None:
         raise credentials_exception
-    return profile;
+    return profile
