@@ -52,11 +52,7 @@ export async function getTotalLocations() {
     }
 }
 
-/**
- * Fetches a location by its index in the list (from 0 to total locations - 1).
- * @param index - The index of the location in the list.
- * @returns The location object or null if index is out of range.
- */
+
 /**
  * Fetches a location by its index and extracts lat/lon into an object.
  * @param index - The index of the location in the list.
@@ -83,6 +79,37 @@ export async function getLocationByIndex(index: number) {
     } catch (error) {
         //console.error(`Error fetching location at index ${index}:`, error);
         return null;
+    }
+}
+
+/**
+ * Fetches a location by its index and extracts lat/lon into an object.
+ * @param indices - The indices of the locations in the list.
+ * @returns The location object with parsed coordinates or null if index is out of range.
+ */
+export async function getLocationsByIndices(indices: number[]) {
+    try {
+        const locations = await getAllLocations();
+        const result = indices.map((index) => {
+            if (index < 0 || index >= locations.length) {
+                return null; // Handle out-of-range indices gracefully
+            }
+
+            const location = locations[index];
+
+            // Extract lat and lon from the string (assuming format is "lat: xx.xxx, lon: xx.xxx")
+            const coordinates = location.coordinates.match(/lat:\s*(-?\d+\.\d+),\s*lon:\s*(-?\d+\.\d+)/);
+            const parsedCoordinates = coordinates
+                ? { lat: parseFloat(coordinates[1]), lon: parseFloat(coordinates[2]) }
+                : null;
+
+            return { ...location, parsedCoordinates };
+        });
+
+        return result;
+    } catch (error) {
+        //console.error("Error fetching locations:", error);
+        return indices.map(() => null); // Return an array of nulls if there's an error
     }
 }
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 //import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import "../App.css"; // Use the same styles as the login page
-import { getTotalLocations, getLocationByIndex } from "../api/geo_utils.js";
+import { getTotalLocations, getLocationsByIndices } from "../api/geo_utils.js";
 
 
 function seededRandom(seed: number) {
@@ -24,6 +24,18 @@ function generateRandomIndices(seed: number, count: number, max: number) {
 
   return indices.slice(0, count);
 }
+
+const hashStringToNumber = (str: string | null | undefined, seed = 31): number => {
+  if (!str) return 0; // Handle null, undefined, and empty strings safely
+
+  let hash = 0;
+  
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash * seed + str.charCodeAt(i)) % 1_000_000_007; // Modulo for overflow safety
+  }
+
+  return hash;
+};
 
 const Game: React.FC = () => {
   //const { currentProfile, logout } = useAuth();
@@ -51,8 +63,11 @@ const Game: React.FC = () => {
     dislikes: 0,
     comments: [],
 };
+  const [searchParams] = useSearchParams();
 
-  const seed = 283746;
+  // Get query parameters
+  const lobby = hashStringToNumber(searchParams.get("lobby")); // "lobby_1741563940914"
+  const seed = lobby ? lobby : Date.now();
   const navigate = useNavigate(); // Initialize navigation
   const [totalLocations, setTotalLocations] = useState<number | null>(null);
   const NUM_ROUNDS = 5;
@@ -60,6 +75,7 @@ const Game: React.FC = () => {
   const [roundScores, setRoundScores] = useState<number[]>(Array(NUM_ROUNDS).fill(null));
   const [round, setRound] = useState<number>(0);
   const [roundLocations, setRoundLocations] = useState<number[]>([])
+  const [locations, setLocations] = useState<LocationData[]>([]);
   const [location, setLocation] = useState<LocationData>(DEFAULT_LOCATION);
   
   const overlayImagePath = "/data/ucla_map_hires.png";
@@ -128,23 +144,27 @@ const Game: React.FC = () => {
   }, []);
 
   useEffect(() => {
-      if (totalLocations !== null) {
-          setRoundLocations(generateRandomIndices(seed, NUM_ROUNDS, totalLocations));
-      }
+    if (totalLocations !== null) {
+        const fetchLocations = async () => {
+            const newRoundLocations = generateRandomIndices(seed, NUM_ROUNDS, totalLocations);
+            setRoundLocations(newRoundLocations);
+
+            // Wait for `roundLocations` to be updated before fetching
+            const data = await getLocationsByIndices(newRoundLocations);
+            setLocations(data);
+        };
+        fetchLocations();
+    }
   }, [totalLocations]);
 
   useEffect(() => {
-      const fetchLocation = async () => {
-          if (roundLocations.length > 0 && roundLocations[round] !== undefined) {
-              const data = await getLocationByIndex(roundLocations[round]);
-              setLocation(data);
-          } else {
-              console.error("Invalid roundLocations or undefined index:", roundLocations, round);
-          }
-      };
+    if (roundLocations.length > 0 && locations.length > round && locations[round] !== undefined) {
+        setLocation(locations[round]);
+    } else {
+        console.error("Invalid roundLocations or undefined index:", roundLocations, round);
+    }
+}, [round, roundLocations, locations]);
 
-      fetchLocation();
-  }, [round, roundLocations]);
 
   // Handle user click to place a marker
   const handleOverlayClick = (event: React.MouseEvent<HTMLImageElement>) => {
@@ -206,7 +226,7 @@ const Game: React.FC = () => {
       setLocationMarker(locationXY);
       console.log(location.coordinates);
     }
-    else if (marker && round < 4) {
+    else if (marker && round < NUM_ROUNDS-1) {
       const score = calculateDistanceAndScore(marker, targetPoint);
       setRoundScores((prevScores) => {
         const newScores = [...prevScores];
@@ -217,8 +237,9 @@ const Game: React.FC = () => {
       setMarker(null);
       setLocationMarker(null);
       setButtonPhase(0);
+      setLocation(locations[round]);
     }
-    else if (round >= 4)
+    else if (round >= NUM_ROUNDS-1)
     {
       console.log(roundScores);
       navigate('/profile');
