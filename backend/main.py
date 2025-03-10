@@ -7,6 +7,7 @@ import auth
 from database import engine, get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 import uuid
+from api import game_routes
 
 app = FastAPI()
 
@@ -17,6 +18,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add the game routes
+app.include_router(game_routes.router, prefix="/game", tags=["game"])
 
 
 @app.on_event("startup")
