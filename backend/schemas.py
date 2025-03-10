@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 
 
 class ProfileCreate(BaseModel):
@@ -22,9 +22,17 @@ class ProfileUpdate(BaseModel):
     average_score: float
 
 
-class GameHistoryUpdate(BaseModel):
+class GameResponse(BaseModel):
+    game_id: str
     lobby_id: str
-    score: float
+    seed: int
+    timestamp: int
+    score1: int
+    score2: int
+    score3: int
+    score4: int
+    score5: int
+    profile_id: str
 
 
 class Token(BaseModel):

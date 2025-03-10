@@ -37,7 +37,6 @@ async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(ge
     # Generate a random user_id
     user_id = str(uuid.uuid4())
     profile_id = str(uuid.uuid4())
-    game_history_id = str(uuid.uuid4())
 
     # Hash the password
     hashed_password = auth.get_password_hash(profile.password)
@@ -57,14 +56,6 @@ async def register(profile: schemas.ProfileCreate, db: AsyncSession = Depends(ge
     db.add(db_profile)
     await db.commit()
     await db.refresh(db_profile)
-    db_game_history = models.GameHistory(
-        game_history_id=game_history_id,
-        profile_id=profile_id,
-        lobby_id="",
-    )
-    db.add(db_game_history)
-    await db.commit()
-    await db.refresh(db_game_history)
     return {"user_id": user_id, "profile_id": profile_id}
 
 
@@ -112,31 +103,43 @@ async def delete_profile(
     game_history = await db.execute(select(models.GameHistory).where(models.GameHistory.profile_id == current_profile.profile_id));
     profile = await db.execute(select(models.Profile).where(models.Profile.profile_id == current_profile.profile_id));
     user = await db.execute(select(models.User).where(models.User.user_id == current_profile.user_id));
-    await db.delete(game_history.scalar());
+    if game_history.scalar_one_or_none() is not None:
+        await db.delete(game_history.scalar());
     await db.delete(profile.scalar());   
     await db.delete(user.scalar());
     await db.commit();
     return {"message": "Profile deleted"}
 
-@app.put("/profile/game")
-async def update_game_history(
+@app.put("/game", response_model=schemas.GameResponse)
+async def update_game(
     lobby_id: str,
-    score: float,
+    seed: int,
+    score1: int,
+    score2: int,
+    score3: int,
+    score4: int,
+    score5: int,
+    timestamp: int,
     current_profile: models.Profile = Depends(auth.get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    db_game_history = await db.execute(
-        select(models.GameHistory).where(
-            models.GameHistory.profile_id == current_profile.profile_id
-        )
+    if not current_profile:
+        raise HTTPException(status_code=401, detail="Not Authenticated")
+    game_id = str(uuid.uuid4());
+    game = models.Game(
+        game_id=game_id,
+        lobby_id=lobby_id,
+        seed=seed,
+        timestamp=timestamp,
+        score1=score1,
+        score2=score2,
+        score3=score3,
+        score4=score4,
+        score5=score5,
+        profile_id=current_profile.profile_id,
     )
-    if db_game_history.scalar_one_or_none():
-        raise HTTPException(status_code=404, detail="Profile not found")
-
-    db_game_history.lobby_id = lobby_id
-    db_game_history.score = score
-    db.add(db_game_history)
-    await db.commit()
-    await db.refresh(db_game_history)
-    return db_game_history
+    db.add(game);
+    await db.commit();
+    await db.refresh(game);
+    return game;
 
