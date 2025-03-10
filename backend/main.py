@@ -95,11 +95,28 @@ async def update_profile(
     current_profile: models.Profile = Depends(auth.get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if not current_profile:
+        raise HTTPException(status_code=401, detail="Not Authenticated")
     current_profile.average_score = profile.average_score
     await db.commit()
     await db.refresh(current_profile)
-    return {"user_id": current_profile.user_id, "profile_id": current_profile.profile_id}
+    return current_profile;
 
+@app.delete("/profile")
+async def delete_profile(
+    current_profile: models.Profile = Depends(auth.get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if not current_profile:
+        raise HTTPException(status_code=401, detail="Not Authenticated")
+    game_history = await db.execute(select(models.GameHistory).where(models.GameHistory.profile_id == current_profile.profile_id));
+    profile = await db.execute(select(models.Profile).where(models.Profile.profile_id == current_profile.profile_id));
+    user = await db.execute(select(models.User).where(models.User.user_id == current_profile.user_id));
+    await db.delete(game_history.scalar());
+    await db.delete(profile.scalar());   
+    await db.delete(user.scalar());
+    await db.commit();
+    return {"message": "Profile deleted"}
 
 @app.put("/profile/game")
 async def update_game_history(
@@ -123,11 +140,3 @@ async def update_game_history(
     await db.refresh(db_game_history)
     return db_game_history
 
-@app.delete("/profile")
-async def delete_profile(
-    current_profile: models.Profile = Depends(auth.get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    db.delete(current_profile)
-    await db.commit()
-    return {"message": "Profile deleted"}

@@ -14,7 +14,7 @@ class User(Base):
 
 class Profile(Base):
     __tablename__ = "profile"
-
+    
     profile_id = Column(
         String(36), primary_key=True, unique=True, index=True
     )  # UUIDs are 36 characters long
