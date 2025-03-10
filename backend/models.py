@@ -24,16 +24,22 @@ class Profile(Base):
     )
 
 
-class GameHistory(Base):
-    __tablename__ = "game_history"
+class Game(Base):
+    __tablename__ = "game"
 
-    game_history_id = Column(String(36), primary_key=True, unique=True, index=True)
+    game_id = Column(String(36), primary_key=True, unique=True, index=True)
+    lobby_id = Column(String(36), unique=False, index=True)
+    seed = Column(Integer, unique=False, nullable=False)
+    timestamp = Column(Integer, nullable=False)
+    score1 = Column(Integer, nullable=False)
+    score2 = Column(Integer, nullable=False)
+    score3 = Column(Integer, nullable=False)
+    score4 = Column(Integer, nullable=False)
+    score5 = Column(Integer, nullable=False)
     profile_id = Column(
         String(36),
         ForeignKey("profile.profile_id"),
-        unique=True,
+        unique=False,
         nullable=False,
         index=True,
     )
-    game_info = Column(String(36), nullable=True)
-    score = Column(Float, nullable=True)
