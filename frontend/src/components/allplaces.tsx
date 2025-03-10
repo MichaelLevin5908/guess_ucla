@@ -19,14 +19,8 @@ export default function Places() {
 
   useEffect(() => {
     const fetchLocations = async () => {
-      try {
         const response = await getAllLocations();
         setLocations(response);
-      } catch (error) {
-        console.error("Error fetching locations:", error);
-      } finally {
-        setLoading(false);
-      }
     };
 
     fetchLocations();
@@ -41,7 +35,7 @@ export default function Places() {
         {locations.map((location, index) => (
           <div key={index} className="location-card">
             <h2>{location.ucla_name}</h2>
-            <img src={`data:image/jpeg;base64,${location.image_storage}`}/>
+            <img src={`data:image/jpeg;base64,${location.image_storage}` alt="Location Picture"}/>
             <p><strong>Address:</strong> {location.address}</p>
             <p><strong>Coordinates:</strong> {location.coordinates}</p>
             <p><strong>Views:</strong> {location.views}</p>

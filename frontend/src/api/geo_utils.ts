@@ -1,7 +1,18 @@
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:8001"; // Change this when deploying
-
+interface LocationData {
+    ucla_name: string;
+    address: string;
+    coordinates: string;
+    parsedCoordinates: { lat: number; lon: number };
+    image_storage: string;
+    views: number;
+    ranking: number;
+    likes: number;
+    dislikes: number;
+    comments: string[];
+  }
 /**
  * Fetches all locations from the backend.
  * @returns An array of location objects or an empty array if an error occurs.
@@ -28,7 +39,7 @@ export async function findLocationByName(name: string) {
 
         // Filter by name (case insensitive)
         const matchingLocation = locations.find(
-            (loc: any) => loc.ucla_name.toLowerCase() === name.toLowerCase()
+            (loc: LocationData) => loc.ucla_name.toLowerCase() === name.toLowerCase()
         );
 
         return matchingLocation || null;

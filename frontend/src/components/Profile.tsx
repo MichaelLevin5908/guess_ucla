@@ -49,7 +49,7 @@ const Profile: React.FC = () => {
         
         setIsLoading(false);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        //console.error("Error fetching data:", err);
         setError("Failed to load data");
         setIsLoading(false);
       }
