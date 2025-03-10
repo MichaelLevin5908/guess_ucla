@@ -33,7 +33,7 @@ class GameResponse(BaseModel):
     score4: int
     score5: int
     profile_id: str
-
+    
 
 class Token(BaseModel):
     access_token: str

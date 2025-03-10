@@ -150,7 +150,44 @@ async def update_game(
         score5=score5,
         profile_id=current_profile.profile_id,
     )
-    db.add(game)
-    await db.commit()
-    await db.refresh(game)
-    return game
+    db.add(game);
+    await db.commit();
+    await db.refresh(game);
+    return game;
+
+@app.get("/game/lobby_id", response_model=list[schemas.GameResponse])
+async def get_game(
+    lobby_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    game = await db.execute(
+        select(models.Game).where(models.Game.lobby_id == lobby_id)
+    )
+    games = game.scalars().all()
+    return list(games);
+
+@app.get("/game/profile_id", response_model=list[schemas.GameResponse])
+async def get_game(
+    profile_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    game = await db.execute(
+        select(models.Game).where(models.Game.profile_id == profile_id)
+    )
+    games = game.scalars().all()
+    return list(games);
+
+@app.get("/game/profile_and_lobby_id", response_model=list[schemas.GameResponse])
+async def get_game(
+    profile_id: str,
+    lobby_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    game = await db.execute(
+        select(models.Game).where(models.Game.profile_id == profile_id)
+    )
+    game = await db.execute(
+        select(models.Game).where(models.Game.lobby_id == lobby_id)
+    )
+    games = game.scalars().all()
+    return list(games);
