@@ -35,5 +35,5 @@ class GameHistory(Base):
         nullable=False,
         index=True,
     )
-    game_info = Column(String(36), nullable=True)
+    lobby_id = Column(String(36), nullable=True)
     score = Column(Float, nullable=True)

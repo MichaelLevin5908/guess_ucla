@@ -16,7 +16,6 @@ class ProfileLogin(BaseModel):
 class ProfileResponse(BaseModel):
     user_id: str
     profile_id: str
-    email: str
 
 
 class ProfileUpdate(BaseModel):
@@ -24,7 +23,7 @@ class ProfileUpdate(BaseModel):
 
 
 class GameHistoryUpdate(BaseModel):
-    game_info: str
+    lobby_id: str
     score: float
 
 

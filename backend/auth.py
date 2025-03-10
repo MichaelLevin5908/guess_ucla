@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from models import Profile
+from models import User, Profile
 from schemas import TokenData
 from database import get_db
 import os
@@ -52,8 +52,12 @@ async def get_current_user(
         raise credentials_exception
 
     # Query the profile table instead of users
-    profile = await db.execute(select(Profile).where(Profile.email == token_data.email))
+    current_user = await db.execute(select(User).where(User.email == token_data.email))
+    current_user = current_user.scalar_one_or_none()
+    if current_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    profile = await db.execute(select(Profile).where(current_user.user_id == Profile.user_id))
     profile = profile.scalar_one_or_none()
     if profile is None:
         raise credentials_exception
-    return profile
+    return profile;
