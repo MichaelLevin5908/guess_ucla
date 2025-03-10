@@ -137,9 +137,7 @@ const Game: React.FC = () => {
     getTotalLocations().then((total) => {
         if (typeof total === "number" && total > 0) {
             setTotalLocations(total);
-        } else {
-            console.error("Invalid totalLocations:", total);
-        }
+        } 
     });
   }, []);
 
@@ -160,9 +158,7 @@ const Game: React.FC = () => {
   useEffect(() => {
     if (roundLocations.length > 0 && locations.length > round && locations[round] !== undefined) {
         setLocation(locations[round]);
-    } else {
-        console.error("Invalid roundLocations or undefined index:", roundLocations, round);
-    }
+    } 
 }, [round, roundLocations, locations]);
 
 
@@ -224,7 +220,7 @@ const Game: React.FC = () => {
       setButtonPhase(1);
       const locationXY = transformToXY(targetPoint.lat, targetPoint.lon);
       setLocationMarker(locationXY);
-      console.log(location.coordinates);
+      
       const score = calculateDistanceAndScore(marker, targetPoint);
       setRoundScores((prevScores) => {
         const newScores = [...prevScores];
@@ -241,7 +237,6 @@ const Game: React.FC = () => {
     }
     else if (round >= NUM_ROUNDS-1)
     {
-      console.log(roundScores);
       navigate('/profile');
     }
   };
