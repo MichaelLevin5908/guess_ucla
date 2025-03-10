@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 //import { useAuth } from "../context/AuthContext";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../App.css"; // Use the same styles as the login page
-import { getTotalLocations, getLocationsByIndices } from "../api/geo_utils.js";
+import { getTotalLocations, getLocationsByIndices } from "../api/geo_utils";
 
 
 function seededRandom(seed: number) {
@@ -212,7 +212,7 @@ const Game: React.FC = () => {
 
     function calculateDistanceAndScore(marker: { lat: number; lon: number }, targetPoint: { lat: number; lon: number }) {
         const distance = haversineDistance(marker.lat, marker.lon, targetPoint.lat, targetPoint.lon);
-        const score = distance >= 1.8 ? 0 : 5000 * (1 - distance / 1.8)**2;
+        const score = distance >= 1.5 ? 0 : 5000 * (1 - distance / 1.5)**2.5;
 
         return Math.floor(score);
     }
@@ -220,19 +220,19 @@ const Game: React.FC = () => {
 
   // Handle submission of the guess (dummy example)
   const handleSubmitGuess = () => {
-    if (buttonPhase === 0) {
+    if (marker && buttonPhase === 0) {
       setButtonPhase(1);
       const locationXY = transformToXY(targetPoint.lat, targetPoint.lon);
       setLocationMarker(locationXY);
       console.log(location.coordinates);
-    }
-    else if (marker && round < NUM_ROUNDS-1) {
       const score = calculateDistanceAndScore(marker, targetPoint);
       setRoundScores((prevScores) => {
         const newScores = [...prevScores];
         newScores[round] = score;
         return newScores;
       });
+    }
+    else if (marker && round < NUM_ROUNDS-1) {
       setRound(round+1);
       setMarker(null);
       setLocationMarker(null);
