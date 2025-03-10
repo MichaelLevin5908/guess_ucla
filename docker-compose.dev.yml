@@ -15,11 +15,8 @@ services:
       - DB_PASSWORD=securepassword
       - DB_NAME=auth_db
       - SECRET_KEY=your-secure-secret-key-here
-      - MONGO_URI=${MONGO_ATLAS_URI:-mongodb+srv://username:password@your-cluster.mongodb.net/guessucla}
     depends_on:
       - mariadb
-    env_file:
-      - ./.env.dev
 
   geo_db:
     build:
