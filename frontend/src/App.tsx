@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Game from "./components/Game";
+import Places from "./components/allplaces";
 import "./App.css";
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
           <Route path="/" element={<Navigate to="/profile" />} />
+          <Route path="/places" element={<Places />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

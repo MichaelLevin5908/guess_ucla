@@ -21,6 +21,20 @@ services:
     env_file:
       - ./.env.dev
 
+  geo_db:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile  # Same Dockerfile as backend
+    volumes:
+      - ./backend:/app  # Mount the backend code
+    command: ["uvicorn", "geo_db:geo_db", "--host", "0.0.0.0", "--port", "8001"]
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env  # Load MongoDB URI securely
+    depends_on:
+      - backend
+
   frontend:
     build:
       context: .
