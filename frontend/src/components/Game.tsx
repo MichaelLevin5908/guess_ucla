@@ -153,7 +153,7 @@ const Game: React.FC = () => {
         };
         fetchLocations();
     }
-  }, [totalLocations, seed]);
+  }, [totalLocations]);
 
   useEffect(() => {
     if (roundLocations.length > 0 && locations.length > round && locations[round] !== undefined) {

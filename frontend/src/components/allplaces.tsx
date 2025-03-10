@@ -15,7 +15,6 @@ interface LocationData {
 
 export default function Places() {
   const [locations, setLocations] = useState<LocationData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -26,8 +25,6 @@ export default function Places() {
     fetchLocations();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-
   return (
     <div className="container">
       <h1>Locations</h1>
@@ -35,7 +32,7 @@ export default function Places() {
         {locations.map((location, index) => (
           <div key={index} className="location-card">
             <h2>{location.ucla_name}</h2>
-            <img src={`data:image/jpeg;base64,${location.image_storage}`} alt="Location Picture"/>
+            <img src={`data:image/jpeg;base64,${location.image_storage}`} alt="Location"/>
             <p><strong>Address:</strong> {location.address}</p>
             <p><strong>Coordinates:</strong> {location.coordinates}</p>
             <p><strong>Views:</strong> {location.views}</p>
